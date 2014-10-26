@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Look for music on Kickass Torrents and play it directly from the CLI",
   "main": "index.js",
+  "engines": {
+    "node": ">= 0.10"
+  },
   "scripts": {
     "test": "mocha"
   },
