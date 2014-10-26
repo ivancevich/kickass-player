@@ -1,0 +1,20 @@
+{
+  "name": "kickass-player",
+  "version": "0.0.1",
+  "description": "Look for music on Kickass Torrents and play it directly from the CLI",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "JC Ivancevich <jc.ivancevich@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "batch": "^0.5.1",
+    "cheerio": "^0.17.0",
+    "json-stringify-safe": "^5.0.0",
+    "lame": "^1.1.1",
+    "request": "^2.46.0",
+    "speaker": "^0.2.1",
+    "torrent-stream": "^0.15.1"
+  }
+}
