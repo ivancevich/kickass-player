@@ -141,14 +141,22 @@ function selectSong(songs, callback) {
       init();
       return;
     }
-    callback(null, songs[answer.song]);
+    callback(null, songs[answer.song], songs);
   });
 }
 
-function playSong(err, song) {
+function playSong(err, song, songs) {
   if (err) {
     console.error(err);
     return;
   }
-  player.play([song]);
+  player
+    .play(song)
+    .on(player.events.STARTED, function ( /* song */ ) {
+      // console.log('started playing %s', song.name);
+    })
+    .on(player.events.FINISHED, function ( /* song */ ) {
+      // console.log('finished playing %s', song.name);
+      selectSong(songs, playSong);
+    });
 }
