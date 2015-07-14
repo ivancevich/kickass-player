@@ -3,8 +3,11 @@ Kickass Player
 
 Look for music on Kickass Torrents and play it directly from the CLI
 
+### Installation
+`npm install -g kickass-player`
+
 ### Usage
-Run `npm install && npm start` and Kickass Player will ask you what do you wanna listen to.
+Run `kickass-player` and it will ask you what do you wanna listen to.
 
 ### Notice
 Doesn't work with io.js for now :(

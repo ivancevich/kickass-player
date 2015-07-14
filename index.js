@@ -12,7 +12,9 @@ var ACTIONS = {
   QUIT: 'Quit'
 };
 
-init();
+module.exports = {
+  init: init
+};
 
 function init() {
   inquirer.prompt({

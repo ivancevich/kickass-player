@@ -6,8 +6,11 @@
   "engines": {
     "node": ">= v0.12"
   },
+  "bin": {
+    "kickass-player": "./bin/kickass-player"
+  },
   "scripts": {
-    "start": "node index",
+    "start": "./bin/kickass-player",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "JC Ivancevich <jc.ivancevich@gmail.com>",
