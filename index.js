@@ -1,60 +1,30 @@
 'use strict';
 
-var inquirer = require('inquirer');
+var menus = require('./lib/menus');
 var player = require('./lib/player');
 var kickass = require('./lib/kickass');
 var streamer = require('./lib/streamer');
-
-var ACTIONS = {
-  SOMETHING_RANDOM: 'Listen to something random',
-  SEARCH_MUSIC: 'Search music',
-  BACK: 'back',
-  QUIT: 'Quit'
-};
 
 module.exports = {
   init: init
 };
 
 function init() {
-  inquirer.prompt({
-    type: 'list',
-    name: 'action',
-    message: 'What do you wanna do:',
-    choices: [
-      ACTIONS.SOMETHING_RANDOM,
-      ACTIONS.SEARCH_MUSIC,
-      new inquirer.Separator(),
-      ACTIONS.QUIT
-    ]
-  }, function (answer) {
-    switch (answer.action) {
-      case ACTIONS.SOMETHING_RANDOM:
-        search();
-        break;
-      case ACTIONS.SEARCH_MUSIC:
-        askForSearch();
-        break;
-      case ACTIONS.QUIT:
-        process.exit(0);
-        break;
-      default:
-        console.error('Invalid action');
-    }
+  menus.whatToDo({
+    quit: quit,
+    search: search,
+    askForSearch: askForSearch
   });
 }
 
+function quit() {
+  process.exit(0);
+}
+
 function askForSearch() {
-  inquirer.prompt({
-    type: 'input',
-    name: 'search',
-    message: 'Enter your search ("back" to go back):'
-  }, function (answer) {
-    if (answer.search === ACTIONS.BACK) {
-      init();
-      return;
-    }
-    search(answer.search);
+  menus.askForSearch({
+    init: init,
+    search: search
   });
 }
 
@@ -67,44 +37,22 @@ function search(query) {
 
 function onKickassResults(err, results) {
   if (err) {
-    console.error(err);
+    onError(err);
     return;
   }
-  selectTorrent(results, streamTorrent);
+  selectTorrent(results, getTorrentSongs);
 }
 
 function selectTorrent(torrents, callback) {
-  var choices = torrents.map(function mapTorrents(t, i) {
-    return {
-      name: t.name,
-      value: i
-    };
-  });
-  choices.push(new inquirer.Separator());
-  choices.push({
-    name: 'Go back',
-    value: ACTIONS.BACK
-  });
-  choices.push(new inquirer.Separator());
-
-  inquirer.prompt({
-    type: 'list',
-    name: 'torrent',
-    message: 'Select a torrent',
-    default: 'index',
-    choices: choices
-  }, function (answer) {
-    if (answer.torrent === ACTIONS.BACK) {
-      init();
-      return;
-    }
-    callback(null, torrents[answer.torrent]);
+  menus.askForSelection(torrents, 'Select a torrent', {
+    init: init,
+    callback: callback
   });
 }
 
-function streamTorrent(err, torrent) {
+function getTorrentSongs(err, torrent) {
   if (err) {
-    console.error(err);
+    onError(err);
     return;
   }
   streamer.start(torrent, onSongsResults);
@@ -112,44 +60,22 @@ function streamTorrent(err, torrent) {
 
 function onSongsResults(err, files) {
   if (err) {
-    console.error(err);
+    onError(err);
     return;
   }
   selectSong(files, playSong);
 }
 
 function selectSong(songs, callback) {
-  var choices = songs.map(function mapSongs(s, i) {
-    return {
-      name: s.name,
-      value: i
-    };
-  });
-  choices.push(new inquirer.Separator());
-  choices.push({
-    name: 'Go back',
-    value: ACTIONS.BACK
-  });
-  choices.push(new inquirer.Separator());
-
-  inquirer.prompt({
-    type: 'list',
-    name: 'song',
-    message: 'Select a song',
-    default: 'index',
-    choices: choices
-  }, function (answer) {
-    if (answer.song === ACTIONS.BACK) {
-      init();
-      return;
-    }
-    callback(null, songs[answer.song], songs);
+  menus.askForSelection(songs, 'Select a song', {
+    init: init,
+    callback: callback
   });
 }
 
 function playSong(err, song, songs) {
   if (err) {
-    console.error(err);
+    onError(err);
     return;
   }
   player
@@ -161,4 +87,9 @@ function playSong(err, song, songs) {
       // console.log('finished playing %s', song.name);
       selectSong(songs, playSong);
     });
+}
+
+function onError(err) {
+  console.error(err);
+  init();
 }
