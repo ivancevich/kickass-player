@@ -63,13 +63,13 @@ function onSongsResults(err, files) {
     onError(err);
     return;
   }
-  selectSong(files, playSong);
+  selectSong(files);
 }
 
-function selectSong(songs, callback) {
+function selectSong(songs) {
   menus.askForSelection(songs, 'Select a song', {
     init: init,
-    callback: callback
+    callback: playSong
   });
 }
 
@@ -85,7 +85,7 @@ function playSong(err, song, songs) {
     })
     .on(player.events.FINISHED, function ( /* song */ ) {
       // console.log('finished playing %s', song.name);
-      selectSong(songs, playSong);
+      selectSong(songs);
     });
 }
 
